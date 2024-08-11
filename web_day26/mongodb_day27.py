@@ -1,14 +1,33 @@
 from flask import Flask, render_template
 import os
 from pymongo import MongoClient
+from bson.objectid import ObjectId
+
 usr = 'root'
-pwd = 'example'
-url = '127.0.0.1:27017'
-MONGODB_URI = "mongodb://" + usr + ":" + pwd + "@" + \
-    url + "/admin?authSource=admin&retryWrites=true&w=majority"
-client = MongoClient(MONGODB_URI)
-try:
-    client.admin.command('ping')
-    print("connected")
-except Exception as e:
-    print(e)
+pwd = 'root'
+client = MongoClient("localhost", 27017)
+db = client.admin
+# print(db)
+#db.students.insert_one({'name': 'Asabeneh', 'country': 'Finland', 'city': 'Helsinki', 'age': 250})
+print(client.list_database_names())
+
+student = db.students.find_one()
+#print(student)
+
+student = db.students.find_one({'_id':ObjectId('66b8d738b9013fc9d22785d8')})
+
+query = {
+    "country":"Finland"
+}
+students = db.students.find(query)
+for student in students:
+    print(student)
+
+
+query = {'age': 250}
+new_value = {'$set': {'age': 38}}
+
+db.students.update_one(query, new_value)
+
+db.students.delete_one(query)
+db.students.drop()
