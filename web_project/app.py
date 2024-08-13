@@ -1,5 +1,6 @@
 import json
 
+from bson import ObjectId
 from flask import Flask, render_template, request, redirect, url_for
 import os
 
@@ -52,6 +53,12 @@ def insert():
 @app.route('/findStudent')
 def find():
     return dumps(mongodb_day27.findStudent(db))
+
+# curl -X DELETE http://192.168.50.60:50000/student/66ba1d5e3bcc9d0d39d4fbbd
+@app.route('/student/<id>', methods = ['DELETE'])
+def delete_student (id):
+    db.students.delete_one({"_id":ObjectId(id)})
+    return '<h1>success</h1>'
 
 
 if __name__ == '__main__':
